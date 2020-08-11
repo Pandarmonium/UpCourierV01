@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">UpCourierV01</string>
+    <string name="Main_Client_register">Soy Cliente</string>
+    <string name="Main_Courier_register">Soy Mensajero</string>
+    <string name="Sign_Up">Registrar</string>
+    <string name="Log_in">Ingresar</string>
+    <string name="title_activity_maps">Map</string>
+    <string name="title_activity_client_maps">Map</string>
+</resources>

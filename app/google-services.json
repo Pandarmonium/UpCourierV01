@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "854681402326",
+    "firebase_url": "https://upcourierapp.firebaseio.com",
+    "project_id": "upcourierapp",
+    "storage_bucket": "upcourierapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:854681402326:android:ef74588240825b4c934277",
+        "android_client_info": {
+          "package_name": "com.example.dons.upcourierv01"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "854681402326-gk134eb6hulrcg80kol00ir51avu67r6.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.dons.upcourierv01",
+            "certificate_hash": "aa522c4a1a5e970e0384496ce72a450a76f4c3c8"
+          }
+        },
+        {
+          "client_id": "854681402326-mes1eql88vr4i2shg8kiv290tmhgcs79.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyANyyYoV4016peU8TgcZHsVS9GpVmI_w50"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "854681402326-mes1eql88vr4i2shg8kiv290tmhgcs79.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
