@@ -1,22 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".RegisterCourierActivity">
 
-    <EditText
-        android:id="@+id/SignUp_Courier_Email"
+    <ImageView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Ingrese su correo electrónico"
-        android:inputType="textEmailAddress" />
+        android:layout_height="match_parent"
+        android:src="@drawable/fondo"
+        android:scaleType="centerCrop"
+        />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+
+        <ImageView
+            android:layout_width="218dp"
+            android:layout_height="138dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/btn_redondeado_white"
+            android:layout_gravity="center"
+            android:src="@drawable/upcurier" />
+
+        <EditText
+            android:id="@+id/SignUp_Courier_Email"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="Ingrese su correo electrónico"
+            android:inputType="textEmailAddress" />
 
     <EditText
         android:id="@+id/SignUp_Courier_Passw"
+        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
@@ -25,14 +46,28 @@
 
     <Button
         android:id="@+id/btnCourierLogIn"
-        android:layout_width="match_parent"
+        android:layout_width="176dp"
         android:layout_height="wrap_content"
-        android:text="@string/Log_in" />
+        android:layout_gravity="center"
+        android:background="@drawable/btn_fondo_color1"
+        android:elevation="5dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="30dp"
+        android:text="Ingresar"
+        android:textColor="#fff"
+        android:textSize="16dp"  />
 
     <Button
         android:id="@+id/btnCourierSignUp"
-        android:layout_width="match_parent"
+        android:layout_width="176dp"
         android:layout_height="wrap_content"
-        android:text="@string/Sign_Up" />
+        android:layout_gravity="center"
+        android:background="@drawable/btn_fondo_color1"
+        android:elevation="5dp"
+        android:text="Registrar"
+        android:textColor="#fff"
+        android:textSize="16dp" />
 
-</LinearLayout>
+    </LinearLayout>
+
+</RelativeLayout>
