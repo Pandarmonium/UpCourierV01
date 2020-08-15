@@ -17,8 +17,12 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
@@ -37,7 +41,10 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.TypeFilter;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
 import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -51,6 +58,7 @@ import com.google.firebase.database.annotations.NotNull;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ClientMapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -68,6 +76,13 @@ public class ClientMapsActivity extends FragmentActivity implements OnMapReadyCa
 
     private String clientDestination;
 
+    private LinearLayout mCourierInfo;
+
+    private ImageView mCourierProfileImg;
+
+    private TextView mCourierName, mCourierPhone;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,10 +93,15 @@ public class ClientMapsActivity extends FragmentActivity implements OnMapReadyCa
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        mCourierInfo = (LinearLayout) findViewById(R.id.courierInfo);
+        mCourierProfileImg = (ImageView) findViewById(R.id.imgCourierProfileDesc);
+        mCourierName = (TextView) findViewById(R.id.clientCourierName);
+        mCourierPhone = (TextView) findViewById(R.id.clientCourierPhone);
 
-        mClientLogout = (Button) findViewById(R.id.btnLogOutCourier);
+        mClientLogout = (Button) findViewById(R.id.btnLogOutClient);
         mRequest = (Button) findViewById(R.id.btnRequest);
-        mSettings = (Button) findViewById(R.id.btnSettingsCourier);
+        mSettings = (Button) findViewById(R.id.btnSettingsClient);
+
         mClientLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -125,6 +145,10 @@ public class ClientMapsActivity extends FragmentActivity implements OnMapReadyCa
                     if (mCourierMarker != null){
                         mCourierMarker.remove();
                     }
+                    mCourierInfo.setVisibility(View.GONE);
+                    mCourierName.setText("");
+                    mCourierPhone.setText("");
+                    mCourierProfileImg.setImageResource(R.mipmap.ic_default_user);
 
                     mRequest.setText("Llamar Mensajero");
 
@@ -158,11 +182,16 @@ public class ClientMapsActivity extends FragmentActivity implements OnMapReadyCa
             }
         });
 
+        Places.initialize(getApplicationContext(),"AIzaSyD5kDenHSJQ98g9kiQUeVi-6GpaY8kmoj4");
+        PlacesClient placesClient = Places.createClient(this);
+
         // Initialize the AutocompleteSupportFragment.
         AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
                 getSupportFragmentManager().findFragmentById(R.id.autocomplete_fragment);
 
+        autocompleteFragment.setTypeFilter(TypeFilter.ESTABLISHMENT);
         // Specify the types of place data to return.
+        autocompleteFragment.setCountries("IN");
         autocompleteFragment.setPlaceFields(Arrays.asList(Place.Field.ID, Place.Field.NAME));
 
         // Set up a PlaceSelectionListener to handle the response.
@@ -216,6 +245,7 @@ public class ClientMapsActivity extends FragmentActivity implements OnMapReadyCa
 
                     courierRef.updateChildren(map);
                     getCourierLocation();
+                    getAssignedCourierInfo();
                     mRequest.setText("Buscando al mensajero mas cercano");
                 }
             }
@@ -241,6 +271,39 @@ public class ClientMapsActivity extends FragmentActivity implements OnMapReadyCa
             }
         });
     }
+
+    private void getAssignedCourierInfo() {
+        mCourierInfo.setVisibility(View.VISIBLE);
+        DatabaseReference mClientDatabase = FirebaseDatabase.getInstance().getReference().child("Users")
+                .child("Couriers").child(courierFoundID);
+        mClientDatabase.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists() && dataSnapshot.getChildrenCount() > 0){
+                    Map<String, Object> map = (Map<String,Object>) dataSnapshot.getValue();
+                    if(map.get("courierName") != null) {
+                        mCourierName.setText(map.get("courierName").toString());
+                    }
+
+                    if(map.get("courierPhone") != null) {
+                        mCourierPhone.setText(map.get("courierPhone").toString());
+                    }
+
+                    if(map.get("courierImageUrl") != null){
+                        Glide.with(getApplication()).load(map.get("courierImageUrl").toString()).into(mCourierProfileImg);
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+    }
+
+
 
     private Marker mCourierMarker;
     private DatabaseReference courierLocationRef;

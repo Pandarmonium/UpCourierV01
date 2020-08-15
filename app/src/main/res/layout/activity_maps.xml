@@ -12,6 +12,15 @@
         android:id="@+id/btnLogOutCourier"
         android:text="Salir"
         />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/btnSettingsCourier"
+        android:layout_gravity="end"
+        android:text="Perfil"
+        />
+
     <fragment
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"

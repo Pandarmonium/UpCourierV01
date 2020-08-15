@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CourierSettingsActivity">
+    <ImageView
+        android:layout_width="100sp"
+        android:layout_height="100sp"
+        android:id="@+id/imgCourierProfile"
+        android:src="@mipmap/ic_default_user"
+        android:layout_marginBottom="20sp"
+        android:layout_gravity="center"
+        />
+    <EditText
+        android:id="@+id/courierName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:hint="Nombre"
+        android:layout_marginBottom="20sp"
+        />
+    <EditText
+        android:id="@+id/courierPhone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@null"
+        android:hint="Teléfono"
+        android:layout_marginBottom="20sp"
+        android:inputType="phone"
+        />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/saveDataCourier"
+        android:text="Guardar"
+        />
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/backSettingsCourier"
+        android:text="Volver"
+        />
+
+</LinearLayout>

@@ -19,7 +19,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/btnLogOutCourier"
+            android:id="@+id/btnLogOutClient"
             android:text="Salir"
             />
 
@@ -28,12 +28,12 @@
             android:layout_gravity="right"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/btnSettingsCourier"
+            android:id="@+id/btnSettingsClient"
             android:text="Perfil"
             />
 
         <androidx.cardview.widget.CardView
-            android:layout_below="@id/btnSettingsCourier"
+            android:layout_below="@id/btnSettingsClient"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="20sp">
@@ -48,14 +48,63 @@
 
     </RelativeLayout>
 
-    <Button
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/btnRequest"
-        android:text="LLamada"
+        android:orientation="vertical"
         android:layout_gravity="bottom"
-        />
+        >
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/courierInfo"
+        android:orientation="horizontal"
+        android:background="@android:color/white"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="100sp"
+            android:layout_height="100sp"
+            android:id="@+id/imgCourierProfileDesc"
+            android:src="@mipmap/ic_default_user"
+            android:padding="20sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingLeft="20sp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/clientCourierName"
+                android:paddingBottom="10sp"
+                android:paddingTop="10sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/clientCourierPhone"
+                android:paddingBottom="10sp"
+                android:paddingTop="10sp" />
+        </LinearLayout>
+    </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/cardview_light_background">
+        <Button
+            android:layout_gravity="bottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/btnRequest"
+            android:text="LLamada"
+            />
+        </LinearLayout>
+    </LinearLayout>
 
 </FrameLayout>
 

@@ -41,7 +41,6 @@ public class RegisterCourierActivity extends AppCompatActivity {
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 //Obtenemos el nodo de user
                 FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
                 //Evaluamos para el ingreso
                 if(user != null){
                     Intent intent = new Intent(RegisterCourierActivity.this, MapsActivity.class);
@@ -78,9 +77,9 @@ public class RegisterCourierActivity extends AppCompatActivity {
                                     String user_id = authUser.getCurrentUser().getUid();
                                     //Añadimos el usuario al nodo correspondiente
                                     DatabaseReference current_user_db = FirebaseDatabase.getInstance().getReference()
-                                            .child("Users").child("Couriers").child(user_id);
+                                            .child("Users").child("Couriers").child(user_id).child("name");
                                     //Debemos asegurar que el registro se ha añadido
-                                    current_user_db.setValue(true);
+                                    current_user_db.setValue(email);
                                 }
                             }
                         });

@@ -24,6 +24,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.directions.route.AbstractRouting;
+import com.directions.route.Route;
+import com.directions.route.RouteException;
+import com.directions.route.Routing;
+import com.directions.route.RoutingListener;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.common.ConnectionResult;
@@ -42,6 +47,8 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
+import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -50,10 +57,11 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, RoutingListener {
 
     private GoogleMap mMap;
     private Location mLastLocation;
@@ -61,7 +69,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private SupportMapFragment mapFragment;
     private FusedLocationProviderClient mFusedLocationClient;
 
-    private Button mCourierLogout;
+    private Button mCourierLogout, mCourierSettings;
 
     private String clientId = "";
 
@@ -83,12 +91,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        mCourierLogout = (Button) findViewById(R.id.btnLogOutCourier);
+        mCourierSettings = (Button) findViewById(R.id.btnSettingsCourier);
+
         mClientInfo = (LinearLayout) findViewById(R.id.clientInfo);
         mClientProfileImg = (ImageView) findViewById(R.id.imgClientProfileDesc);
         mClientName = (TextView) findViewById(R.id.courierClientName);
         mClientPhone = (TextView) findViewById(R.id.courierClientPhone);
         mClientDestination = (TextView) findViewById(R.id.courierClientDestination);
-        mCourierLogout = (Button) findViewById(R.id.btnLogOutCourier);
+
+        polylines = new ArrayList<>();
 
         mCourierLogout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,6 +112,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 Intent intent = new Intent(MapsActivity.this, MainActivity.class);
                 startActivity(intent);
                 finish();
+                return;
+            }
+        });
+
+        mCourierSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MapsActivity.this, CourierSettingsActivity.class);
+                startActivity(intent);
                 return;
             }
         });
@@ -120,6 +141,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     getAssignedClientDestination();
                     getAssignedClientInfo();
                 } else {
+                    erasePolylines();
                     clientId = "";
                     if(pickupMarker != null){
                         pickupMarker.remove();
@@ -218,9 +240,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         locationLng = Double.parseDouble(map.get(1).toString());
                     }
 
-                    LatLng courierLatLng = new LatLng(locationLat, locationLng);
-                    pickupMarker = mMap.addMarker(new MarkerOptions().position(courierLatLng)
+                    LatLng pickupLatLng = new LatLng(locationLat, locationLng);
+                    pickupMarker = mMap.addMarker(new MarkerOptions().position(pickupLatLng)
                             .title("Ubicación de Recojo").icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_pickup)));
+                    getRouteToMarker(pickupLatLng);
+
                 }
             }
 
@@ -229,6 +253,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             }
         });
+    }
+
+    private void getRouteToMarker(LatLng pickupLatLng) {
+        Routing routing = new Routing.Builder()
+                .key("AIzaSyD5kDenHSJQ98g9kiQUeVi-6GpaY8kmoj4")
+                .travelMode(AbstractRouting.TravelMode.DRIVING)
+                .withListener(this)
+                .alternativeRoutes(false)
+                .waypoints(new LatLng(mLastLocation.getLatitude(),mLastLocation.getLongitude()), pickupLatLng)
+                .build();
+        routing.execute();
     }
 
     @Override
@@ -352,4 +387,56 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
+    private List<Polyline> polylines;
+    private static final int[] COLORS = new int[]{R.color.colorAccent};
+
+    @Override
+    public void onRoutingFailure(RouteException e) {
+        if(e != null) {
+            Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }else {
+            Toast.makeText(this, "Something went wrong, Try again", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onRoutingStart() {
+    }
+
+    @Override
+    public void onRoutingSuccess(ArrayList<Route> route, int shortestRouteIndex) {
+        if(polylines.size()>0) {
+            for (Polyline poly : polylines) {
+                poly.remove();
+            }
+        }
+
+        polylines = new ArrayList<>();
+        //add route(s) to the map.
+        for (int i = 0; i <route.size(); i++) {
+
+            //In case of more than 5 alternative routes
+            int colorIndex = i % COLORS.length;
+
+            PolylineOptions polyOptions = new PolylineOptions();
+            polyOptions.color(getResources().getColor(COLORS[colorIndex]));
+            polyOptions.width(10 + i * 3);
+            polyOptions.addAll(route.get(i).getPoints());
+            Polyline polyline = mMap.addPolyline(polyOptions);
+            polylines.add(polyline);
+
+            Toast.makeText(getApplicationContext(),"Route "+ (i+1) +": distance - "+ route.get(i).getDistanceValue()+": duration - "+ route.get(i).getDurationValue(),Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    public void onRoutingCancelled() {
+    }
+
+    private void erasePolylines(){
+        for(Polyline line : polylines){
+            line.remove();
+        }
+        polylines.clear();
+    }
 }
